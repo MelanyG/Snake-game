@@ -32,8 +32,7 @@ namespace Game_Snake
         private bool EqualToYZero = false;
         private bool EqualToXZero = false;
         public ConsoleKeyInfo info;
-        private int tmp { set; get; }
-        public Direction direction { get; set; }
+         public Direction direction { get; set; }
         public delegate void Movement();
         public event Movement MoveForward;
         public event Movement MoveDown;
@@ -70,8 +69,12 @@ namespace Game_Snake
         public void DrawSnake()
         {
             bool ok = true;
+                ThreadStart TStart = new ThreadStart(GetCurrentDirection);
+                Thread MyThread = new Thread(TStart);
+                MyThread.Start();
             while (ok)
             {
+
                 Console.Clear();
 
                 for (int i = 0; i < 10; i++)
@@ -145,9 +148,7 @@ namespace Game_Snake
 
                 Thread.Sleep(50);
 
-                ThreadStart TStart = new ThreadStart(GetCurrentDirection);
-                Thread MyThread = new Thread(TStart);
-                MyThread.Start();
+
 
                 if (score == 20)
                 {
@@ -162,28 +163,30 @@ namespace Game_Snake
 
         private void GetCurrentDirection()
         {
-            info = Console.ReadKey(true);
-            if (info.Key == ConsoleKey.UpArrow)
+            while (true)
             {
-                direction = Direction.Up;
+                info = Console.ReadKey(true);
+                if (info.Key == ConsoleKey.UpArrow)
+                {
+                    direction = Direction.Up;
+                }
+                else if (info.Key == ConsoleKey.RightArrow)
+                {
+                    direction = Direction.Forward;
+                }
+                else if (info.Key == ConsoleKey.LeftArrow)
+                {
+                    direction = Direction.Back;
+                }
+                else if (info.Key == ConsoleKey.DownArrow)
+                {
+                    direction = Direction.Down;
+                }
+                else if (info.Key == ConsoleKey.Escape)
+                {
+                    direction = Direction.Finish;
+                }
             }
-            else if (info.Key == ConsoleKey.RightArrow)
-            {
-                direction = Direction.Forward;
-            }
-            else if (info.Key == ConsoleKey.LeftArrow)
-            {
-                  direction = Direction.Back;
-              }
-            else if (info.Key == ConsoleKey.DownArrow)
-            {
-                direction = Direction.Down;
-            }
-            else if (info.Key == ConsoleKey.Escape)
-            {
-                direction = Direction.Finish;
-            }
-
         }
 
         private void GenerateRandomPosition()
